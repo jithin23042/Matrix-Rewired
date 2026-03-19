@@ -13,7 +13,11 @@ export const registerWorker = (req, res) => {
     city,
     platform,
     workingHours,
-    avgHourlyIncome
+    avgHourlyIncome,
+    insurancePlan: null,
+    insuranceActive: false,
+    customPremium: null,
+    coverageAmount: null
   };
 
   workers.push(worker);

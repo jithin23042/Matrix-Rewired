@@ -1,3 +1,4 @@
 export const workers = [];
 export const subscriptions = [];
-export const payouts = [];
+import { samplePayouts } from './sample-payouts.js';
+export const payouts = samplePayouts;
