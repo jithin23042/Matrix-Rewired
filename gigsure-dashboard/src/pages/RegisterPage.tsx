@@ -49,6 +49,10 @@ const RegisterPage = () => {
 
     console.log("API Response:", data);
 
+    if (!response.ok) {
+      throw new Error(data.message || "Registration failed");
+    }
+
     // Store workerId (important for next pages)
     localStorage.setItem("workerId", data.workerId);
 
@@ -56,7 +60,7 @@ const RegisterPage = () => {
 
   } catch (error) {
     console.error("Registration error:", error);
-    alert("Failed to register worker. Please try again.");
+    alert(`Failed to register worker: ${error.message || "Please try again."}`);
   }
 };
 

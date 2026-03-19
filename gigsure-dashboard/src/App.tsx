@@ -7,6 +7,9 @@ import LandingPage from "./pages/LandingPage";
 import RegisterPage from "./pages/RegisterPage";
 import DashboardPage from "./pages/DashboardPage";
 import InsurancePage from "./pages/InsurancePage";
+import NormalPlanPage from "./pages/NormalPlanPage";
+import BasicPlanPage from "./pages/BasicPlanPage";
+import PremiumPlanPage from "./pages/PremiumPlanPage";
 import SimulationPage from "./pages/SimulationPage";
 import PayoutPage from "./pages/PayoutPage";
 import NotFound from "./pages/NotFound";
@@ -24,6 +27,9 @@ const App = () => (
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/insurance" element={<InsurancePage />} />
+          <Route path="/plans/normal" element={<NormalPlanPage />} />
+          <Route path="/plans/basic" element={<BasicPlanPage />} />
+          <Route path="/plans/premium" element={<PremiumPlanPage />} />
           <Route path="/simulation" element={<SimulationPage />} />
           <Route path="/payout" element={<PayoutPage />} />
           <Route path="*" element={<NotFound />} />

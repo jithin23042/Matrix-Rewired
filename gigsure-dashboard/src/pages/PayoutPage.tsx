@@ -1,21 +1,94 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Wallet, CheckCircle2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import AppNav from "@/components/AppNav";
 import { mockPayouts, mockWorker } from "@/lib/mockData";
 import { cn } from "@/lib/utils";
 
 const PayoutPage = () => {
+  const navigate = useNavigate();
   const [processing, setProcessing] = useState(false);
   const [paid, setPaid] = useState(false);
+  const [payoutHistory, setPayoutHistory] = useState([]);
+  const [workerData, setWorkerData] = useState(null);
+  const [loading, setLoading] = useState(true);
   const incomeLoss = 450;
 
-  const processPayout = () => {
+  useEffect(() => {
+    const fetchData = async () => {
+      const workerId = localStorage.getItem("workerId");
+      if (!workerId) {
+        navigate("/register");
+        return;
+      }
+
+      try {
+        // Fetch worker data
+        const workerResponse = await fetch(`http://localhost:5000/worker/${workerId}`);
+        if (workerResponse.ok) {
+          const worker = await workerResponse.json();
+          setWorkerData(worker);
+        }
+
+        // Fetch payout history
+        const payoutsResponse = await fetch(`http://localhost:5000/payout/${workerId}`);
+        if (payoutsResponse.ok) {
+          const payouts = await payoutsResponse.json();
+          setPayoutHistory(payouts);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [navigate]);
+
+  const processPayout = async () => {
+    const workerId = localStorage.getItem("workerId");
+    if (!workerId) {
+      navigate("/register");
+      return;
+    }
+
     setProcessing(true);
-    setTimeout(() => {
+    
+    try {
+      const response = await fetch("http://localhost:5000/payout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          workerId,
+          amount: incomeLoss,
+          reason: "Weather disruption - Heavy rainfall"
+        }),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        setPaid(true);
+        
+        // Refresh payout history
+        const payoutsResponse = await fetch(`http://localhost:5000/payout/${workerId}`);
+        if (payoutsResponse.ok) {
+          const payouts = await payoutsResponse.json();
+          setPayoutHistory(payouts);
+        }
+      } else {
+        const error = await response.json();
+        alert(error.message || "Failed to process payout");
+      }
+    } catch (error) {
+      console.error("Error processing payout:", error);
+      alert("Failed to process payout. Please try again.");
+    } finally {
       setProcessing(false);
-      setPaid(true);
-    }, 1500);
+    }
   };
 
   return (
@@ -37,7 +110,7 @@ const PayoutPage = () => {
           <div className="bg-background rounded-lg p-5 text-center mb-5">
             <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Calculated Income Loss</p>
             <p className="font-data text-4xl font-bold text-foreground">₹{incomeLoss.toFixed(2)}</p>
-            <p className="text-xs text-muted-foreground mt-1">Based on {mockWorker.avgHourlyEarnings}/hr × 3h disruption</p>
+            <p className="text-xs text-muted-foreground mt-1">Based on {workerData?.avgHourlyIncome || mockWorker.avgHourlyEarnings}/hr × 3h disruption</p>
           </div>
 
           {paid ? (
@@ -84,24 +157,44 @@ const PayoutPage = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {mockPayouts.map((p) => (
-                    <tr key={p.id} className="border-b border-border last:border-0">
-                      <td className="px-4 py-3 font-data text-foreground">{p.date}</td>
-                      <td className="px-4 py-3 text-foreground">{p.event}</td>
-                      <td className="px-4 py-3 font-data text-muted-foreground">{p.duration}</td>
-                      <td className="px-4 py-3 font-data text-right font-semibold text-success">+₹{p.amount.toFixed(2)}</td>
-                      <td className="px-4 py-3 text-right">
-                        <span className={cn(
-                          "inline-block px-2 py-0.5 text-xs font-medium rounded",
-                          p.status === 'completed' && "bg-success/10 text-success",
-                          p.status === 'pending' && "bg-warning/10 text-warning",
-                          p.status === 'processing' && "bg-primary/10 text-primary",
-                        )}>
-                          {p.status}
-                        </span>
+                  {loading ? (
+                    <tr>
+                      <td colSpan={5} className="px-4 py-8 text-center text-muted-foreground">
+                        Loading payout history...
                       </td>
                     </tr>
-                  ))}
+                  ) : payoutHistory.length === 0 ? (
+                    <tr>
+                      <td colSpan={5} className="px-4 py-8 text-center text-muted-foreground">
+                        No payout history yet
+                      </td>
+                    </tr>
+                  ) : (
+                    payoutHistory.map((p) => (
+                      <tr key={p.id} className="border-b border-border last:border-0">
+                        <td className="px-4 py-3 font-data text-foreground">
+                          {new Date(p.date).toLocaleDateString('en-IN', {
+                            day: '2-digit',
+                            month: 'short',
+                            year: 'numeric'
+                          })}
+                        </td>
+                        <td className="px-4 py-3 text-foreground">{p.reason}</td>
+                        <td className="px-4 py-3 font-data text-muted-foreground">-</td>
+                        <td className="px-4 py-3 font-data text-right font-semibold text-success">+₹{p.amount.toFixed(2)}</td>
+                        <td className="px-4 py-3 text-right">
+                          <span className={cn(
+                            "inline-block px-2 py-0.5 text-xs font-medium rounded",
+                            p.status === 'processed' && "bg-success/10 text-success",
+                            p.status === 'pending' && "bg-warning/10 text-warning",
+                            p.status === 'processing' && "bg-primary/10 text-primary",
+                          )}>
+                            {p.status}
+                          </span>
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>

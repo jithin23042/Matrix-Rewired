@@ -1,19 +1,85 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { CloudRain, AlertTriangle, CheckCircle2, Timer } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import AppNav from "@/components/AppNav";
 
 const SimulationPage = () => {
+  const navigate = useNavigate();
   const [triggered, setTriggered] = useState(false);
   const [simulating, setSimulating] = useState(false);
+  const [simulationData, setSimulationData] = useState(null);
+  const [workerData, setWorkerData] = useState(null);
 
-  const runSimulation = () => {
+  useEffect(() => {
+    const fetchWorkerData = async () => {
+      const workerId = localStorage.getItem("workerId");
+      if (!workerId) {
+        navigate("/register");
+        return;
+      }
+
+      try {
+        const response = await fetch(`http://localhost:5000/worker/${workerId}`);
+        if (response.ok) {
+          const worker = await response.json();
+          setWorkerData(worker);
+        }
+      } catch (error) {
+        console.error("Error fetching worker data:", error);
+      }
+    };
+
+    fetchWorkerData();
+  }, [navigate]);
+
+  const runSimulation = async () => {
+    const workerId = localStorage.getItem("workerId");
+    if (!workerId) {
+      navigate("/register");
+      return;
+    }
+
     setSimulating(true);
     setTriggered(false);
-    setTimeout(() => {
-      setTriggered(true);
+    setSimulationData(null);
+
+    try {
+      // Simulate heavy rainfall event
+      const rainfallMm = 22; // 22mm/hr - above 15mm/hr threshold
+      const durationHours = 3; // 3 hours disruption
+
+      const response = await fetch("http://localhost:5000/trigger/simulate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          workerId,
+          rainfallMm,
+          durationHours
+        }),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        
+        // Wait for 2 seconds to show the simulation progress
+        setTimeout(() => {
+          setSimulationData(result);
+          setTriggered(result.triggered);
+          setSimulating(false);
+        }, 2000);
+      } else {
+        const error = await response.json();
+        alert(error.message || "Simulation failed");
+        setSimulating(false);
+      }
+    } catch (error) {
+      console.error("Error running simulation:", error);
+      alert("Failed to run simulation. Please try again.");
       setSimulating(false);
-    }, 2000);
+    }
   };
 
   return (
@@ -93,11 +159,15 @@ const SimulationPage = () => {
                 <div className="grid grid-cols-2 gap-3">
                   <div className="p-3 bg-background rounded-lg text-center">
                     <p className="text-xs text-muted-foreground uppercase tracking-wider">Rainfall</p>
-                    <p className="font-data text-lg font-semibold text-foreground">22mm/hr</p>
+                    <p className="font-data text-lg font-semibold text-foreground">
+                      {simulationData?.rainfallMm || 22}mm/hr
+                    </p>
                   </div>
                   <div className="p-3 bg-background rounded-lg text-center">
                     <p className="text-xs text-muted-foreground uppercase tracking-wider">Duration</p>
-                    <p className="font-data text-lg font-semibold text-foreground">3h 00m</p>
+                    <p className="font-data text-lg font-semibold text-foreground">
+                      {simulationData?.durationHours || 3}h 00m
+                    </p>
                   </div>
                 </div>
               </div>
@@ -113,9 +183,21 @@ const SimulationPage = () => {
                   </div>
                 </div>
                 <div className="mt-4 p-3 bg-background rounded-lg text-center">
-                  <p className="text-xs text-muted-foreground uppercase tracking-wider">Estimated Payout</p>
-                  <p className="font-data text-3xl font-bold text-success">₹450.00</p>
+                  <p className="text-xs text-muted-foreground uppercase tracking-wider">Payout Amount</p>
+                  <p className="font-data text-3xl font-bold text-success">
+                    ₹{simulationData?.payout?.amount?.toFixed(2) || "450.00"}
+                  </p>
                 </div>
+                {simulationData?.payout && (
+                  <div className="mt-3 text-center">
+                    <p className="text-xs text-muted-foreground">
+                      Payout ID: {simulationData.payout.id}
+                    </p>
+                    <p className="text-xs text-success mt-1">
+                      ✓ Automatically credited to your account
+                    </p>
+                  </div>
+                )}
               </div>
             </motion.div>
           )}
@@ -126,3 +208,4 @@ const SimulationPage = () => {
 };
 
 export default SimulationPage;
+
