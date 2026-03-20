@@ -1,6 +1,9 @@
 import express from "express";
 import cors from "cors";
 import workerRoutes from "./routes/worker.routes.js";
+import insuranceRoutes from "./routes/insurance.routes.js";
+import payoutRoutes from "./routes/payout.routes.js";
+import triggerRoutes from "./routes/trigger.routes.js";
 
 const app = express();
 
@@ -9,6 +12,9 @@ app.use(express.json());
 
 // Routes
 app.use("/worker", workerRoutes);
+app.use("/insurance", insuranceRoutes);
+app.use("/payout", payoutRoutes);
+app.use("/trigger", triggerRoutes);
 
 app.get("/", (req, res) => {
   res.send("API running");

@@ -5,9 +5,14 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import LandingPage from "./pages/LandingPage";
 import RegisterPage from "./pages/RegisterPage";
+import LoginPage from "./pages/LoginPage";
 import DashboardPage from "./pages/DashboardPage";
 import InsurancePage from "./pages/InsurancePage";
-import SimulationPage from "./pages/SimulationPage";
+import InsuranceClaimPage from "./pages/InsuranceClaimPage";
+import RainClaimPage from "./pages/RainClaimPage";
+import FloodClaimPage from "./pages/FloodClaimPage";
+import HailstormClaimPage from "./pages/HailstormClaimPage";
+import CurfewClaimPage from "./pages/CurfewClaimPage";
 import PayoutPage from "./pages/PayoutPage";
 import NotFound from "./pages/NotFound";
 
@@ -22,9 +27,14 @@ const App = () => (
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/login" element={<LoginPage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/insurance" element={<InsurancePage />} />
-          <Route path="/simulation" element={<SimulationPage />} />
+          <Route path="/claim" element={<InsuranceClaimPage />} />
+          <Route path="/claim/rain" element={<RainClaimPage />} />
+          <Route path="/claim/flood" element={<FloodClaimPage />} />
+          <Route path="/claim/hail" element={<HailstormClaimPage />} />
+          <Route path="/claim/curfew" element={<CurfewClaimPage />} />
           <Route path="/payout" element={<PayoutPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
