@@ -110,6 +110,7 @@ Examples include:
 
 - heavy rainfall exceeding a threshold
 - flood alerts in the delivery zone
+- hailstones
 - curfew or movement restrictions
 
 When these triggers occur, the system detects a **potential disruption event**.
