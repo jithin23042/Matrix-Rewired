@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Shield, CloudRain, Zap, Wallet } from "lucide-react";
 
 const features = [
-  { icon: <CloudRain className="h-5 w-5" />, title: "Weather Triggers", desc: "Automatic detection of rain, floods, and curfews" },
+  { icon: <CloudRain className="h-5 w-5" />, title: "Event Triggers", desc: "Automatic detection of weather events and curfews" },
   { icon: <Zap className="h-5 w-5" />, title: "Instant Payouts", desc: "Compensation processed within minutes, not weeks" },
   { icon: <Wallet className="h-5 w-5" />, title: "Low Premiums", desc: "Starting at just ₹45/week for full coverage" },
 ];
@@ -33,13 +33,13 @@ const LandingPage = () => (
             to="/register"
             className="inline-flex items-center justify-center px-6 py-3 bg-primary text-primary-foreground font-semibold rounded-md shadow-[0_0_0_1px_rgba(0,0,0,0.1)_inset,0_2px_4px_rgba(0,0,0,0.1)] hover:brightness-110 transition-all"
           >
-            Get Started
+            Register
           </Link>
           <Link
-            to="/dashboard"
+            to="/login"
             className="inline-flex items-center justify-center px-6 py-3 bg-card text-foreground font-medium rounded-md shadow-card hover:bg-muted transition-colors"
           >
-            View Demo Dashboard
+            Login
           </Link>
         </div>
       </motion.div>
@@ -74,11 +74,6 @@ const LandingPage = () => (
               <Wallet className="h-8 w-8 text-success" />
               <span className="text-xs font-medium text-muted-foreground text-center">Digital Wallet</span>
             </div>
-          </div>
-          <div className="h-px bg-border mb-6" />
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-muted-foreground">Disruption detected → Payout in</span>
-            <span className="font-data font-semibold text-success">~5 min</span>
           </div>
         </div>
       </motion.div>

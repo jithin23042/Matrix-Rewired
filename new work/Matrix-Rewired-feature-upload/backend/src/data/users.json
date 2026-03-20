@@ -1,0 +1,122 @@
+[
+  {
+    "id": "w1",
+    "name": "Jithinn Jyothi",
+    "city": "Delhi",
+    "platform": "Swiggy",
+    "workingHours": "10:00-22:00",
+    "avgHourlyIncome": 100,
+    "idProofType": "Aadhar",
+    "idProofNumber": "123412341234",
+    "password": "secret123",
+    "registeredAt": "2026-03-20T01:21:12.020Z"
+  },
+  {
+    "id": "w2",
+    "name": "Jithinn Jyothi2",
+    "city": "Delhi",
+    "platform": "Swiggy",
+    "workingHours": "10:00-22:00",
+    "avgHourlyIncome": 100,
+    "idProofType": "Aadhar",
+    "idProofNumber": "123412341235",
+    "password": "secret123",
+    "registeredAt": "2026-03-20T01:30:45.736Z"
+  },
+  {
+    "id": "w3",
+    "name": "Jithinn Jyothi3",
+    "city": "Delhi",
+    "platform": "Swiggy",
+    "workingHours": "10:00-22:00",
+    "avgHourlyIncome": 100,
+    "idProofType": "Aadhar",
+    "idProofNumber": "123412341236",
+    "password": "secret123",
+    "registeredAt": "2026-03-20T01:31:36.652Z"
+  },
+  {
+    "id": "w4",
+    "name": "asdf",
+    "city": "Delhi",
+    "platform": "Zomato",
+    "workingHours": "10:00-22:00",
+    "avgHourlyIncome": 160,
+    "idProofType": "Aadhar",
+    "idProofNumber": "123412341234123",
+    "password": "asdfasdf",
+    "registeredAt": "2026-03-20T01:31:59.873Z"
+  },
+  {
+    "id": "w5",
+    "name": "Jithin Boi",
+    "city": "Mumbai",
+    "platform": "Swiggy",
+    "workingHours": "10:00-22:00",
+    "avgHourlyIncome": 150,
+    "idProofType": "PAN",
+    "idProofNumber": "1213121312",
+    "password": "jithin123",
+    "registeredAt": "2026-03-20T01:33:42.483Z"
+  },
+  {
+    "id": "w6",
+    "name": "guji mon",
+    "city": "Delhi",
+    "platform": "Zomato",
+    "workingHours": "10:00-22:00",
+    "avgHourlyIncome": 150,
+    "idProofType": "PAN",
+    "idProofNumber": "123412341234",
+    "password": "guji@123",
+    "registeredAt": "2026-03-20T01:37:07.257Z"
+  },
+  {
+    "id": "w7",
+    "name": "Jithin Jyothi",
+    "city": "Delhi",
+    "platform": "Zomato",
+    "workingHours": "10:00-22:00",
+    "avgHourlyIncome": 150,
+    "idProofType": "PAN",
+    "idProofNumber": "123412341234",
+    "password": "123456",
+    "registeredAt": "2026-03-20T01:40:33.264Z"
+  },
+  {
+    "id": "w8",
+    "name": "Rahul Sharma",
+    "city": "Mumbai",
+    "platform": "Swiggy",
+    "workingHours": "10:00-22:00",
+    "avgHourlyIncome": 100,
+    "idProofType": "Aadhar",
+    "idProofNumber": "14785236963258",
+    "password": "123456",
+    "registeredAt": "2026-03-20T02:48:00.831Z"
+  },
+  {
+    "id": "w9",
+    "name": "qatar",
+    "city": "Bangalore",
+    "platform": "Zomato",
+    "workingHours": "10:00-22:00",
+    "avgHourlyIncome": 10,
+    "idProofType": "PAN",
+    "idProofNumber": "123412341234",
+    "password": "qatar123",
+    "registeredAt": "2026-03-20T03:01:23.512Z"
+  },
+  {
+    "id": "w10",
+    "name": "Jinjo",
+    "city": "Mumbai",
+    "platform": "Swiggy",
+    "workingHours": "10:00-22:00",
+    "avgHourlyIncome": 100,
+    "idProofType": "Aadhar",
+    "idProofNumber": "123412341234",
+    "password": "123456",
+    "registeredAt": "2026-03-20T03:36:57.917Z"
+  }
+]

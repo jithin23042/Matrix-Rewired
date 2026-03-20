@@ -36,14 +36,45 @@ const InsurancePage = () => {
         const workerData = await workerAPI.getWorker(workerId);
         setWorker(workerData);
 
-        const subscriptionData = await insuranceAPI.getSubscription(workerId);
-        setSubscription(subscriptionData);
+        // Check localStorage for existing insurance data
+        const savedInsurance = localStorage.getItem("insurance");
+        if (savedInsurance) {
+          const insuranceData = JSON.parse(savedInsurance);
+          if (insuranceData.workerId === workerId && insuranceData.isActive) {
+            setSubscription({
+              id: "local-sub",
+              workerId,
+              active: true,
+              weeklyPremium: insuranceData.premium,
+              coverageAmount: insuranceData.coverage,
+              riskScore: 45,
+              startDate: new Date(),
+              status: "active"
+            });
+            setUserWeeklyAmount(insuranceData.premium);
+            setCoveragePreview(insuranceData.coverage);
+          } else {
+            // Fetch subscription data from backend
+            const subscriptionData = await insuranceAPI.getSubscription(workerId);
+            setSubscription(subscriptionData);
+            setUserWeeklyAmount(subscriptionData?.weeklyPremium || 100);
+            setCoveragePreview((subscriptionData?.weeklyPremium || 100) * 20);
+          }
+        } else {
+          // Fetch subscription data from backend
+          const subscriptionData = await insuranceAPI.getSubscription(workerId);
+          setSubscription(subscriptionData);
+          setUserWeeklyAmount(subscriptionData?.weeklyPremium || 100);
+          setCoveragePreview((subscriptionData?.weeklyPremium || 100) * 20);
+        }
 
         // Set default amount based on worker earnings
         const defaultPremium = Math.round(workerData.avgHourlyIncome * 60 * 0.05);
         const userAmount = defaultPremium >= 50 ? defaultPremium : 100;
-        setUserWeeklyAmount(userAmount);
-        setCoveragePreview(userAmount * 20);
+        if (!subscription) {
+          setUserWeeklyAmount(userAmount);
+          setCoveragePreview(userAmount * 20);
+        }
 
       } catch (err) {
         console.error("Error fetching data:", err);
@@ -68,6 +99,15 @@ const InsurancePage = () => {
       const workerId = localStorage.getItem("workerId");
       const result = await insuranceAPI.subscribe(workerId!, userWeeklyAmount);
       setSubscription(result.subscription);
+
+      // Store insurance data in localStorage
+      const insuranceData = {
+        workerId,
+        premium: userWeeklyAmount,
+        coverage: userWeeklyAmount * 20,
+        isActive: true
+      };
+      localStorage.setItem("insurance", JSON.stringify(insuranceData));
     } catch (err) {
       console.error("Subscription error:", err);
       setError("Failed to subscribe");
@@ -78,11 +118,14 @@ const InsurancePage = () => {
 
   const handleCancel = async () => {
     if (!confirm("Are you sure you want to cancel coverage?")) return;
-    
+
     try {
       const workerId = localStorage.getItem("workerId");
       const result = await insuranceAPI.cancel(workerId!);
       setSubscription(result.subscription);
+
+      // Remove insurance data from localStorage
+      localStorage.removeItem("insurance");
     } catch (err) {
       console.error("Cancel error:", err);
       setError("Failed to cancel subscription");
@@ -226,6 +269,13 @@ const InsurancePage = () => {
                 <Check className="h-4 w-4" />
                 Coverage Active • ₹{weeklyPremium}/week
               </div>
+              <motion.button
+                whileTap={{ scale: 0.98 }}
+                onClick={() => navigate("/claim")}
+                className="w-full py-3 bg-primary text-primary-foreground font-semibold rounded-md hover:brightness-110 transition-all"
+              >
+                Continue to Claim
+              </motion.button>
               <motion.button
                 whileTap={{ scale: 0.98 }}
                 onClick={handleCancel}

@@ -1,14 +1,16 @@
-import { workers, subscriptions, payouts } from "../data/db.js";
+import { subscriptions, payouts } from "../data/db.js";
+import { loadUsers } from "../data/users.service.js";
 
 // Create payout (triggered by weather/disruption)
-export const createPayout = (req, res) => {
+export const createPayout = async (req, res) => {
   const { workerId, reason, hoursLost, disruptionType } = req.body;
 
   if (!workerId || !hoursLost || !reason) {
     return res.status(400).json({ message: "Missing required fields" });
   }
 
-  const worker = workers.find(w => w.id === workerId);
+  const users = await loadUsers();
+  const worker = users.find(w => w.id === workerId);
   if (!worker) {
     return res.status(404).json({ message: "Worker not found" });
   }

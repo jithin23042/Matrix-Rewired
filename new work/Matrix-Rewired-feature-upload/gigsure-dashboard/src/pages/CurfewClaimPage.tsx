@@ -27,6 +27,24 @@ const CurfewClaimPage = () => {
   const [error, setError] = useState("");
   const [payout, setPayout] = useState<any>(null);
 
+  const savePayout = () => {
+    const workerId = localStorage.getItem("workerId");
+    if (!workerId || !payout) return;
+
+    const payoutData = {
+      workerId,
+      type: "curfew",
+      hoursLost: 5,
+      payout: payout.amount,
+      date: new Date().toISOString()
+    };
+
+    const existingData = localStorage.getItem("payoutHistory");
+    const history = existingData ? JSON.parse(existingData) : [];
+    history.push(payoutData);
+    localStorage.setItem("payoutHistory", JSON.stringify(history));
+  };
+
   const allVerified =
     verification.curfewProof &&
     verification.locationProof &&
@@ -72,6 +90,7 @@ const CurfewClaimPage = () => {
 
       setPayout(payoutResult.payout);
       setSubmitted(true);
+      savePayout();
     } catch (err: any) {
       setError(err.message || "Failed to submit claim");
     } finally {

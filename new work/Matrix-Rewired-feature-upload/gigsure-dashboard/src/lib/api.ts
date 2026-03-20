@@ -14,6 +14,14 @@ export const workerAPI = {
     const res = await fetch(`${API_BASE}/worker/${id}`);
     return res.json();
   },
+  login: async (data) => {
+    const res = await fetch(`${API_BASE}/worker/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    return res.json();
+  },
 };
 
 // Insurance API

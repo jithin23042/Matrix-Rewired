@@ -1,14 +1,16 @@
-import { workers, subscriptions } from "../data/db.js";
+import { subscriptions } from "../data/db.js";
+import { loadUsers } from "../data/users.service.js";
 
 // Subscribe to insurance
-export const subscribeInsurance = (req, res) => {
+export const subscribeInsurance = async (req, res) => {
   const { workerId } = req.body;
 
   if (!workerId) {
     return res.status(400).json({ message: "Worker ID is required" });
   }
 
-  const worker = workers.find(w => w.id === workerId);
+  const users = await loadUsers();
+  const worker = users.find(w => w.id === workerId);
   if (!worker) {
     return res.status(404).json({ message: "Worker not found" });
   }

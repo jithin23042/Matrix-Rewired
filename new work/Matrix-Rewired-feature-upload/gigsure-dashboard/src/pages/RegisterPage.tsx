@@ -11,7 +11,7 @@ const idProofTypes = ["Aadhar", "PAN", "Driving License", "Passport", "Voter ID"
 const RegisterPage = () => {
   const navigate = useNavigate();
   const [form, setForm] = useState({
-    name: "", city: "", platform: "", hoursStart: "10:00", hoursEnd: "22:00", avgEarnings: "", idProofType: "", idProofNumber: "",
+    name: "", city: "", platform: "", hoursStart: "10:00", hoursEnd: "22:00", avgEarnings: "", idProofType: "", idProofNumber: "", password: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
@@ -24,6 +24,8 @@ const RegisterPage = () => {
     if (!form.platform) e.platform = "Select a platform";
     if (!form.idProofType) e.idProofType = "Select ID proof type";
     if (!form.idProofNumber.trim()) e.idProofNumber = "ID proof number is required";
+    if (!form.password.trim()) e.password = "Password is required";
+    else if (form.password.length < 6) e.password = "Password should be at least 6 characters";
     if (!form.avgEarnings || Number(form.avgEarnings) <= 0) e.avgEarnings = "Enter valid earnings";
     setErrors(e);
     return Object.keys(e).length === 0;
@@ -44,26 +46,15 @@ const RegisterPage = () => {
         workingHours: `${form.hoursStart}-${form.hoursEnd}`,
         avgHourlyIncome: Number(form.avgEarnings),
         idProofType: form.idProofType,
-        idProofNumber: form.idProofNumber
+        idProofNumber: form.idProofNumber,
+        password: form.password
       };
 
       const data = await workerAPI.register(payload);
 
       if (data.workerId) {
-        // Store worker data in localStorage
-        localStorage.setItem("workerId", data.workerId);
-        localStorage.setItem("workerData", JSON.stringify({
-          name: form.name,
-          city: form.city,
-          platform: form.platform,
-          workingHours: `${form.hoursStart}-${form.hoursEnd}`,
-          avgHourlyIncome: Number(form.avgEarnings),
-          idProofType: form.idProofType,
-          idProofNumber: form.idProofNumber
-        }));
-
-        // Redirect to dashboard
-        navigate("/dashboard", { replace: true });
+        // After registration, go to login (not dashboard)
+        navigate("/login", { replace: true });
       } else {
         setApiError(data.message || "Registration failed");
       }
@@ -135,6 +126,19 @@ const RegisterPage = () => {
               disabled={loading}
             />
             {errors.name && <p className={errorClass}>{errors.name}</p>}
+          </motion.div>
+
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.12 }}>
+            <label className={labelClass}>Password</label>
+            <input
+              type="password"
+              className={inputClass}
+              value={form.password}
+              onChange={(e) => setForm({ ...form, password: e.target.value })}
+              placeholder="Minimum 6 characters"
+              disabled={loading}
+            />
+            {errors.password && <p className={errorClass}>{errors.password}</p>}
           </motion.div>
 
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>

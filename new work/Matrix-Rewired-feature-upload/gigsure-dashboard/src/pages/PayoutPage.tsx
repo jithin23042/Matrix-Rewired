@@ -6,6 +6,26 @@ import AppNav from "@/components/AppNav";
 import { workerAPI, payoutAPI } from "@/lib/api";
 import { cn } from "@/lib/utils";
 
+type LocalPayout = {
+  workerId: string;
+  type: string;
+  hoursLost: number;
+  payout: number;
+  date: string;
+};
+
+const getPayoutHistory = (): LocalPayout[] => {
+  try {
+    const raw = localStorage.getItem("payoutHistory");
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    return parsed;
+  } catch {
+    return [];
+  }
+};  
+
 const PayoutPage = () => {
   const navigate = useNavigate();
   const [worker, setWorker] = useState<any>(null);
@@ -14,30 +34,54 @@ const PayoutPage = () => {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const workerId = localStorage.getItem("workerId");
-        if (!workerId) {
-          navigate("/register");
-          return;
-        }
-
-        const workerData = await workerAPI.getWorker(workerId);
-        setWorker(workerData);
-
-        const payoutsData = await payoutAPI.getWorkerPayouts(workerId);
-        setPayouts(payoutsData);
-
-      } catch (err) {
-        console.error("Error fetching data:", err);
-        setError("Failed to load payout data");
-      } finally {
-        setLoading(false);
+  const fetchData = async () => {
+    try {
+      const workerId = localStorage.getItem("workerId");
+      if (!workerId) {
+        navigate("/register");
+        return;
       }
-    };
 
-    fetchData();
-  }, [navigate]);
+      const workerData = await workerAPI.getWorker(workerId);
+      setWorker(workerData);
+
+      // Try backend first
+      let payoutsData = [];
+      try {
+        payoutsData = await payoutAPI.getWorkerPayouts(workerId);
+      } catch {
+        payoutsData = [];
+      }
+
+      // Fallback to localStorage if backend empty
+      if (!payoutsData || payoutsData.length === 0) {
+        const localData = getPayoutHistory();
+
+        // normalize format to match UI
+        const mapped = localData.map((p, idx) => ({
+          id: idx,
+          reason: p.type,
+          hoursLost: p.hoursLost,
+          amount: p.payout,
+          dateTriggered: p.date,
+          status: "processed",
+        }));
+
+        setPayouts(mapped);
+      } else {
+        setPayouts(payoutsData);
+      }
+
+    } catch (err) {
+      console.error("Error fetching data:", err);
+      setError("Failed to load payout data");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchData();
+}, [navigate]);
 
   if (loading) {
     return (

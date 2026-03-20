@@ -28,7 +28,26 @@ const DashboardPage = () => {
 
       // Fetch subscription data
       const subscriptionData = await insuranceAPI.getSubscription(workerId);
-      setSubscription(subscriptionData);
+      const savedInsurance = localStorage.getItem("insurance");
+      if (savedInsurance) {
+        const insuranceData = JSON.parse(savedInsurance);
+        if (insuranceData.workerId === workerId && insuranceData.isActive) {
+          setSubscription({
+            id: "local-sub",
+            workerId,
+            active: true,
+            weeklyPremium: insuranceData.premium,
+            coverageAmount: insuranceData.coverage,
+            riskScore: 45,
+            startDate: insuranceData.activatedAt || new Date().toISOString(),
+            status: "active"
+          });
+        } else {
+          setSubscription(subscriptionData);
+        }
+      } else {
+        setSubscription(subscriptionData);
+      }
 
     } catch (err) {
       console.error("Error fetching data:", err);
@@ -133,10 +152,18 @@ const DashboardPage = () => {
               className="flex items-center gap-2"
             >
               {isSubscribed ? (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-success/10 text-success text-sm font-medium border border-success/20">
-                  <span className="h-2 w-2 rounded-full bg-success animate-pulse" />
-                  Active Coverage
-                </span>
+                <>
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-success/10 text-success text-sm font-medium border border-success/20">
+                    <span className="h-2 w-2 rounded-full bg-success animate-pulse" />
+                    Active Coverage
+                  </span>
+                  <button
+                    onClick={() => navigate("/claim")}
+                    className="ml-2 px-3 py-2 rounded-md bg-primary text-white text-sm font-semibold hover:brightness-110 transition-all"
+                  >
+                    Continue to Claim
+                  </button>
+                </>
               ) : (
                 <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-warning/10 text-warning text-sm font-medium border border-warning/20">
                   No Coverage
