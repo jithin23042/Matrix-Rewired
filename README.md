@@ -13,7 +13,8 @@
 - Technology Stack
 - Development Plan
 - System Architecture
-- Future Enhancements
+- Adversarial Defense & Anti-Spoofing Strategy
+- Prototype and Future Enhancements
 
 ## Overview
 
