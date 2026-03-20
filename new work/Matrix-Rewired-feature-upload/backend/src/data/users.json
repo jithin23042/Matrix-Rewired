@@ -118,5 +118,29 @@
     "idProofNumber": "123412341234",
     "password": "123456",
     "registeredAt": "2026-03-20T03:36:57.917Z"
+  },
+  {
+    "id": "w11",
+    "name": "asdfasdf",
+    "city": "Delhi",
+    "platform": "Zomato",
+    "workingHours": "10:00-22:00",
+    "avgHourlyIncome": 100,
+    "idProofType": "PAN",
+    "idProofNumber": "1234123412341",
+    "password": "asdfasdf",
+    "registeredAt": "2026-03-20T06:22:41.492Z"
+  },
+  {
+    "id": "w12",
+    "name": "abcd",
+    "city": "Delhi",
+    "platform": "Swiggy",
+    "workingHours": "10:00-22:00",
+    "avgHourlyIncome": 10,
+    "idProofType": "Aadhar",
+    "idProofNumber": "123412341234",
+    "password": "asdfasdf",
+    "registeredAt": "2026-03-20T06:27:45.057Z"
   }
 ]
