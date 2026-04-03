@@ -1,6 +1,5 @@
-import { subscriptions } from "../data/db.js";
+import { subscriptions, payouts } from "../data/db.js";
 
-// Simulate weather trigger
 export const triggerWeatherEvent = (req, res) => {
   const { workerId, eventType, severity } = req.body;
 
@@ -8,30 +7,41 @@ export const triggerWeatherEvent = (req, res) => {
     return res.status(400).json({ message: "Missing required fields" });
   }
 
-  const subscription = subscriptions.find(s => s.workerId === workerId && s.active);
+  const subscription = subscriptions.find(
+    s => String(s.workerId) === String(workerId) && s.active
+  );
 
   if (!subscription) {
     return res.status(400).json({ message: "Worker has no active subscription" });
   }
 
+  // Trigger object
   const trigger = {
-    id: "trigger" + Date.now(),
+    id: "trigger_" + Date.now(),
     workerId,
     eventType,
     severity: severity || "moderate",
-    timestamp: new Date(),
-    triggered: true
+    timestamp: new Date()
   };
 
+  // 🔥 ADD THIS (CORE FIX)
+  const payout = {
+    id: "payout_" + Date.now(),
+    workerId,
+    amount: 100, // fixed demo value
+    eventType,
+    timestamp: new Date()
+  };
+
+  payouts.push(payout);
+
   res.json({
-    triggerId: trigger.id,
-    message: "Weather trigger activated",
-    trigger
+    message: "Trigger → Claim → Payout completed",
+    trigger,
+    payout
   });
 };
 
-// Get trigger history
 export const getTriggerHistory = (req, res) => {
-  // This would typically query a triggers table
-  res.json({ message: "Trigger history feature coming soon", triggers: [] });
+  res.json({ message: "Trigger history not implemented" });
 };

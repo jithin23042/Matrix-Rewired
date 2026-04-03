@@ -7,6 +7,7 @@ import workerRoutes from "./routes/worker.routes.js";
 import insuranceRoutes from "./routes/insurance.routes.js";
 import payoutRoutes from "./routes/payout.routes.js";
 import triggerRoutes from "./routes/trigger.routes.js";
+import subscriptionRoutes from "./routes/subscription.routes.js";
 
 const app = express();
 
@@ -15,6 +16,7 @@ app.use(cors());
 app.use(express.json());
 
 // ================= API ROUTES =================
+app.use("/subscription", subscriptionRoutes);
 app.use("/worker", workerRoutes);
 app.use("/insurance", insuranceRoutes);
 app.use("/payout", payoutRoutes);
@@ -31,14 +33,14 @@ const __dirname = path.dirname(__filename);
 
 // ================= FRONTEND SERVING =================
 
-// Serve static files
-const frontendPath = path.join(__dirname, "../../gigsure-dashboard/dist");
-app.use(express.static(frontendPath));
+// // Serve static files
+// const frontendPath = path.join(__dirname, "../../gigsure-dashboard/dist");
+// app.use(express.static(frontendPath));
 
-// Catch-all handler (NO wildcard pattern issue)
-app.use((req, res) => {
-  res.sendFile(path.join(frontendPath, "index.html"));
-});
+// // Catch-all handler (NO wildcard pattern issue)
+// app.use((req, res) => {
+//   res.sendFile(path.join(frontendPath, "index.html"));
+// });
 
 // ================= PORT =================
 const PORT = process.env.PORT || 5000;
